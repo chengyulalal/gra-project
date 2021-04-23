@@ -1,8 +1,8 @@
 <!--
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-19 15:07:29
- * @FilePath: \gra-project\src\components\login.vue
+ * @LastEditTime: 2021-04-23 15:49:12
+ * @FilePath: \gra-project-sourcetree\src\components\login.vue
 -->
 <template>
   <div class="login">
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { getUser } from '../http/api'
  export default {
   name:'login',
   data() {
@@ -58,7 +59,7 @@
       rules: {
         unipue: [
           { required: true, message: '请输入账号', trigger: 'blur' },
-          { len: 11, message: '输入账号错误', trigger: 'blur' }
+          { len: 12, message: '输入账号错误', trigger: 'blur' }
         ],
         Pass: [
           { validator: validatePass, trigger: 'blur' }
@@ -70,7 +71,15 @@
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          getUser({ unique:this.ruleForm.unipue, password:this.ruleForm.Pass, auth:this.ruleForm.user }).then(res => {
+            if (res.data.msg === '操作失败') {
+              alert('密码或权限错误,请重新输入');
+              this.ruleForm.Pass = '';
+            } else {
+              alert('登录成功')
+              localStorage.setItem('token',res.data[0].user_token);
+            }
+          })
         } else {
           console.log('error submit!!');
           return false;

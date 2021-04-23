@@ -1,8 +1,8 @@
 <!--
  * @Date: 2021-04-19 13:28:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-20 12:46:28
- * @FilePath: \gra-project\src\components\register.vue
+ * @LastEditTime: 2021-04-23 15:44:05
+ * @FilePath: \gra-project-sourcetree\src\components\register.vue
 -->
 <template>
   <div class="register">
@@ -15,29 +15,33 @@
       label-width="100px" 
       class="demo-ruleForm" 
       hide-required-asterisk>
-        <el-form-item label="学号/教工号" prop="unipue">
-          <el-input type="text" v-model="ruleForm.unipue" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="Pass">
-          <el-input type="password" v-model="ruleForm.Pass" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass">
-          <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="您的身份">
-          <el-radio-group v-model="ruleForm.user">
-            <el-radio label="教师"></el-radio>
-            <el-radio label="学生"></el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item class="btn">
-          <el-button class="btn1" type="primary" @click="submitForm('ruleForm')">提交</el-button>
-        </el-form-item>
+      <el-form-item label="姓名" prop="name">
+        <el-input type="text" v-model="ruleForm.name" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="学号/教工号" prop="unique">
+        <el-input type="text" v-model="ruleForm.unique" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" prop="Pass">
+        <el-input type="password" v-model="ruleForm.Pass" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="确认密码" prop="checkPass">
+        <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="您的身份">
+        <el-radio-group v-model="ruleForm.user">
+          <el-radio label="教师"></el-radio>
+          <el-radio label="学生"></el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item class="btn">
+        <el-button size='medium' class="btn1" type="primary" @click="submitForm('ruleForm')">提交</el-button>
+      </el-form-item>
     </el-form>
   </div>           
 </template>
 
 <script>
+import { addUser } from '../http/api'
 export default {
   name:'register',
   data() {
@@ -54,7 +58,7 @@ export default {
     var validatePass2 = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请再次输入密码'));
-        } else if (value !== this.ruleForm.pass) {
+        } else if (value !== this.ruleForm.Pass) {
           callback(new Error('两次输入密码不一致!'));
         } else {
           callback();
@@ -62,15 +66,20 @@ export default {
       };
     return {
       ruleForm: {
-        unipue: '',
+        unique: '',
+        name: '',
         Pass: '',
         checkPass: '',
         user:'学生'
       },
       rules: {
-        unipue: [
+        name: [
+          { required: true, message: '请输入姓名', trigger: 'blur' },
+          { min: 2, max: 5, message: '姓名格式错误', trigger: 'blur' }
+        ],
+        unique: [
           { required: true, message: '请输入账号', trigger: 'blur' },
-          { len: 11, message: '输入账号错误', trigger: 'blur' }
+          { len: 12, message: '请输入12位学号或教工号', trigger: 'blur' }
         ],
         Pass: [
           { validator: validatePass, trigger: 'blur' }
@@ -85,14 +94,24 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          addUser(this.ruleForm).then(res => {
+            if (res.data.msg === '用户已注册') {
+              alert('用户已注册');
+              this.resetForm(formName);
+            } else {
+              localStorage.setItem('token',res.data.user_token);
+            }
+          })
         } else {
           console.log('error submit!!');
           return false;
         }
       });
     },
-  }
+    resetForm(formName) {
+        this.$refs[formName].resetFields();
+    }
+  },
 }
 </script>
 

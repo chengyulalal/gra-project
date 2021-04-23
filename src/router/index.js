@@ -1,8 +1,8 @@
 /*
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-19 14:58:35
- * @FilePath: \gra-project\src\router\index.js
+ * @LastEditTime: 2021-04-21 15:50:02
+ * @FilePath: \gra-project-sourcetree\src\router\index.js
  */
 /*
  * @Date: 2021-04-09 16:15:02
@@ -18,6 +18,10 @@ import register from '@/components/register'
 
 Vue.use(Router)
 
+const VueRouterPush = Router.prototype.push
+Router.prototype.push = function push (to) {
+  return VueRouterPush.call(this, to).catch(err => err)
+}
 export default new Router({
   routes: [
     {

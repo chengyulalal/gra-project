@@ -1,3 +1,9 @@
+/*
+ * @Date: 2021-04-20 13:33:22
+ * @LastEditors: chengyu.yang
+ * @LastEditTime: 2021-04-21 16:42:53
+ * @FilePath: \gra-project-sourcetree\config\index.js
+ */
 'use strict'
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
@@ -10,7 +16,15 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        pathRewrite:{
+            '^/api': '/api'
+        }
+      }
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
