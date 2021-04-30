@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-21 13:34:31
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-21 15:53:55
+ * @LastEditTime: 2021-04-27 11:57:12
  * @FilePath: \gra-project-sourcetree\src\http\request.js
  */
 import axios from 'axios'
@@ -10,7 +10,7 @@ import qs from 'qs'
 let baseURL
 // 判断开发环境（一般用于本地代理）
 if (process.env.NODE_ENV === 'development') { // 开发环境
-    baseURL = '/api'    // 你设置的本地代理请求（跨域代理），下文会详细介绍怎么进行跨域代理
+    baseURL = '/api'    // 你设置的本地代理请求（跨域代理）
 } else {                                      // 编译环境
     if (process.env.type === 'test') {        // 测试环境
        
@@ -24,4 +24,33 @@ const Axios = axios.create({
     responseType: 'json',
     withCredentials: false
 });
+
+axios.interceptors.request.use(
+    config => {
+      if (localStorage.getItem('token')) {
+        config.headers.Authorization = localStorage.getItem('token');
+      }
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    }
+);
+
+axios.interceptors.response.use(
+    response => {
+        return response
+    },
+    error => {
+        switch (error.response.status) {
+            case 401:
+                router.replace({
+                    path: '/login',
+                    query: {redirect: router.currentRoute.fullPath}
+                })
+        }
+        return Promise.reject(error.response.data)
+    }
+);
+    
 export default Axios 
