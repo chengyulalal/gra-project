@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-20 13:50:20
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-23 15:34:45
+ * @LastEditTime: 2021-05-08 12:57:38
  * @FilePath: \gra-project-sourcetree\server\api\userApi.js
  */
 const models = require('../db');
@@ -23,21 +23,6 @@ if (result.length === 0) {
     res.json(result);
   }
 };
-// router.post('/verifyToken', (req, res) => {
-//   let token = req.headers['y-Token'];
-//   const secret = 'JQREAD';
-//   if (token) {
-//     jwt.verify(oldToken, secret, (err, decoded) => {
-//       if(err){
-//        console.log(err);
-//        return
-//       }
-//       return 
-//     });
-//   } else {
-//     return null
-//   }
-// });
 var setToken = (uni,pass) =>{
   const secret = 'JQREAD';
   const payload = {
@@ -94,4 +79,15 @@ router.post('/getUser', (req, res) => {
       jsonwrite(res,result);
     });
 });
+router.post('/getClass', (req, res) => {
+  let sql = $sql.course.query;
+  let { unique } = req.body;
+  conn.query(sql, [unique], (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    res.json(result);
+  })
+})
+
 module.exports = router;

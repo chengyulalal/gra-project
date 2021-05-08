@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-21 13:34:31
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-27 11:57:12
+ * @LastEditTime: 2021-05-08 10:24:27
  * @FilePath: \gra-project-sourcetree\src\http\request.js
  */
 import axios from 'axios'
@@ -25,7 +25,7 @@ const Axios = axios.create({
     withCredentials: false
 });
 
-axios.interceptors.request.use(
+Axios.interceptors.request.use(
     config => {
       if (localStorage.getItem('token')) {
         config.headers.Authorization = localStorage.getItem('token');
@@ -37,7 +37,7 @@ axios.interceptors.request.use(
     }
 );
 
-axios.interceptors.response.use(
+Axios.interceptors.response.use(
     response => {
         return response
     },

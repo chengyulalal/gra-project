@@ -1,8 +1,8 @@
 <!--
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-19 15:07:41
- * @FilePath: \gra-project\src\App.vue
+ * @LastEditTime: 2021-04-30 14:58:56
+ * @FilePath: \gra-project-sourcetree\src\App.vue
 -->
 <template>
   <div id="app">
@@ -29,5 +29,12 @@ body{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 </style>

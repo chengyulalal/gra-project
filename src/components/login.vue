@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-23 15:49:12
+ * @LastEditTime: 2021-05-07 21:24:03
  * @FilePath: \gra-project-sourcetree\src\components\login.vue
 -->
 <template>
@@ -15,8 +15,8 @@
     label-width="100px" 
     class="demo-ruleForm" 
     hide-required-asterisk>
-      <el-form-item label="学号/教工号" prop="unipue">
-        <el-input type="text" v-model="ruleForm.unipue" autocomplete="off"></el-input>
+      <el-form-item label="学号/教工号" prop="unique">
+        <el-input type="text" v-model="ruleForm.unique" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="Pass">
         <el-input type="password" v-model="ruleForm.Pass" autocomplete="off"></el-input>
@@ -52,12 +52,12 @@ import { getUser } from '../http/api'
     };
     return {
       ruleForm: {
-        unipue: '',
+        unique: '',
         Pass: '',
         user:'学生'
       },
       rules: {
-        unipue: [
+        unique: [
           { required: true, message: '请输入账号', trigger: 'blur' },
           { len: 12, message: '输入账号错误', trigger: 'blur' }
         ],
@@ -71,13 +71,18 @@ import { getUser } from '../http/api'
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          getUser({ unique:this.ruleForm.unipue, password:this.ruleForm.Pass, auth:this.ruleForm.user }).then(res => {
+          getUser({ unique:this.ruleForm.unique, password:this.ruleForm.Pass, auth:this.ruleForm.user }).then(res => {
             if (res.data.msg === '操作失败') {
               alert('密码或权限错误,请重新输入');
               this.ruleForm.Pass = '';
             } else {
-              alert('登录成功')
+              this.$store.commit('setunique', this.ruleForm.unique);
+              this.$message({
+                message: '登录成功',
+                type: 'success'
+              });
               localStorage.setItem('token',res.data[0].user_token);
+              this.$router.push({ path: '/index' })
             }
           })
         } else {

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-30 14:25:12
+ * @LastEditTime: 2021-04-30 14:52:56
  * @FilePath: \gra-project-sourcetree\src\router\index.js
  */
 /*
@@ -15,6 +15,7 @@ import Router from 'vue-router'
 import login from '@/components/login'
 import enter from '@/components/enter'
 import register from '@/components/register'
+import index from '@/components/index'
 
 Vue.use(Router)
  
@@ -39,6 +40,10 @@ const router = new Router({
           component: register
         }
       ]
+    },
+    {
+      path: '/index',
+      component: index 
     }
   ]
 })

@@ -1,8 +1,8 @@
 /*
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-19 14:08:50
- * @FilePath: \gra-project\src\main.js
+ * @LastEditTime: 2021-05-07 21:11:25
+ * @FilePath: \gra-project-sourcetree\src\main.js
  */
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
@@ -10,6 +10,10 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
+import store from './store/index.js'
+
+// 挂载到Vue实力上，全局可通过this.$store进行调用
+Vue.prototype.$store = store
 
 Vue.config.productionTip = false
 Vue.use(ElementUI);
@@ -19,6 +23,7 @@ Vue.use(router);
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
