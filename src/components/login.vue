@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-07 21:24:03
+ * @LastEditTime: 2021-05-09 11:21:44
  * @FilePath: \gra-project-sourcetree\src\components\login.vue
 -->
 <template>
@@ -77,12 +77,13 @@ import { getUser } from '../http/api'
               this.ruleForm.Pass = '';
             } else {
               this.$store.commit('setunique', this.ruleForm.unique);
+              localStorage.setItem('unique', this.ruleForm.unique);
               this.$message({
                 message: '登录成功',
                 type: 'success'
               });
               localStorage.setItem('token',res.data[0].user_token);
-              this.$router.push({ path: '/index' })
+              this.$router.replace({ path: '/index' })
             }
           })
         } else {

@@ -1,8 +1,8 @@
 <!--
  * @Date: 2021-04-19 13:27:47
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-19 15:05:47
- * @FilePath: \gra-project\src\components\enter.vue
+ * @LastEditTime: 2021-05-11 16:09:56
+ * @FilePath: \gra-project-sourcetree\src\components\enter.vue
 -->
 <template>
   <div class="enter">
@@ -20,9 +20,9 @@ export default {
 
       }
     },
-    created () {
-      this.$router.push( {path:'/login'} );
-    }
+    // created () {
+    //   this.$router.replace( {path:'/login'} );
+    // }
 }
 </script>
 

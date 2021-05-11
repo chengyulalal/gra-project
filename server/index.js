@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-20 13:40:06
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-08 11:06:47
+ * @LastEditTime: 2021-05-10 15:10:22
  * @FilePath: \gra-project-sourcetree\server\index.js
  */
 const express = require('express');
@@ -22,15 +22,20 @@ app.use(function (req, res, next) {
       res.status(401).send("token不能为空");
       return
     }
-    let result = jwt.verify(token, secret)
-    console.log(result);
-    // 如果考验通过就next，否则就返回登陆信息不正确
-    if (result == 'err') {
-        console.log(result);
-        res.send({status: 403, msg: '登录已过期,请重新登录'});
-    } else {
+    let result = jwt.verify(token, secret, (err, decoded) => {
+      if (err) {
+        console.log(err);
+        if(err.name == 'TokenExpiredError'){
+          //token过期
+          return res.status(403).send({ code: -1, msg: 'token过期' });
+        }else if(err.name == 'JsonWebTokenError'){
+          //无效的token
+          return res.status(403).send({ code: -1, msg: '无效的token' });
+        }
+      }else{
         next();
-    }
+      }
+    })
   } else {
     next();
   }
