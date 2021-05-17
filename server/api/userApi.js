@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-20 13:50:20
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-10 21:13:19
+ * @LastEditTime: 2021-05-16 14:50:35
  * @FilePath: \gra-project-sourcetree\server\api\userApi.js
  */
 const models = require('../db');
@@ -10,9 +10,13 @@ const router = express.Router();
 const mysql = require('mysql');
 const $sql = require('../sqlMap');
 const jwt = require('jsonwebtoken');
+const multiparty = require("multiparty");
+const fs = require('fs');
 
 var conn = mysql.createConnection(models.mysql);
 conn.connect();
+
+
 var jsonwrite = (res, result) => {
 if (result.length === 0) {
   res.json({
@@ -23,6 +27,43 @@ if (result.length === 0) {
     res.json(result);
   }
 };
+
+function formatReq(code, msg, data) {
+	return {
+		code: code,
+		data: data,
+		message: msg
+	}
+};
+
+function readAllfile(currentDirPath, courseid, callback) {
+  var list = []
+	fs.readdir(currentDirPath, function(err, files) {
+		if (err) {
+      console.log(err);
+			callback()
+		} else {
+			for (let i = 0; i < files.length; i++) {
+        const path = require('path');
+        if (files[i].substring(0,6) === courseid+'') {
+          var filePath = path.join(currentDirPath, files[i]);
+          var stat = fs.statSync(filePath);
+          if (stat.isFile()) {
+            //添加文件信息
+            list.push({
+              file_name: files[i],
+              file_stat: stat,
+              file_path: filePath.replace(/\\/g, "/"),
+              is_file: true	//是否为文件
+            });
+          }
+        }
+			}
+			callback(list)
+		}
+	});
+}
+
 var setToken = (uni,pass) =>{
   const secret = 'JQREAD';
   const payload = {
@@ -32,6 +73,8 @@ var setToken = (uni,pass) =>{
   let token = jwt.sign(payload, secret,{expiresIn: 60*60});
   return token
 }
+
+
 router.post('/addUser', (req, res) => {
     let sql = $sql.user.add;
     let { unique, name, Pass, user} = req.body;
@@ -129,6 +172,82 @@ router.post('/updataPerson', (req, res) => {
     }
     res.json(result);
   })
+});
+router.post('/uploadFile', (req, res) => {
+	//利用multiparty中间件获取文件数据
+	let uploadDir = './' //这个不用改，因为并不是保存在这个目录下，这只是作为中间目录，待会要重命名文件到指定目录的
+
+	let form = new multiparty.Form()
+
+	form.uploadDir = uploadDir
+	form.keepExtensions = true; //是否保留后缀
+	form.parse(req, function(err, fields, files) { //其中fields表示你提交的表单数据对象，files表示你提交的文件对象
+		console.log("上传文件", fields)
+		console.log("files", files)
+		//这里是save_path 就是前端传回来的 path 字段，这个字段会被 multiparty 中间件解析到 fields 里面 ，这里的 fields 相当于 req.body 的意思
+		let save_path = fields.path
+		if (err) {
+			console.log(err)
+			res.send(formatReq(0, "上传失败"))
+		} else {
+			let file_list = []
+			if (!files.file) res.send(formatReq(0, "没上传文件"))
+			else {
+				//所有文件重命名，（因为不重名的话是随机文件名）
+				files.file.forEach(file => {
+					/*
+					 * file.path 文件路径
+					 * save_path+originalFilename   指定上传的路径 + 原来的名字
+					 */
+					fs.rename(file.path, save_path +'_'+ file.originalFilename, function(err) {
+						if (err) {
+							console.log("重命名失败")
+						} else {
+							console.log("重命名成功")
+						}
+					});
+				})
+				if (err) {
+					console.log(err)
+					res.send(formatReq(0, "上传失败"))
+				} else {
+					//返回所有上传的文件信息
+					res.send(formatReq(1, "上传成功"))
+				}
+			}
+
+		}
+	})
+ 
+})
+router.post('/list', (req, res) => {
+  console.log("courseid", req.body.Course_id);
+	readAllfile(req.body.path, req.body.Course_id, file_list => {
+		res.send(formatReq(1, "获取成功", file_list))
+		res.end()
+	})
+})
+
+router.post('/download',(req,res) => {
+  res.download(req.body.path);
+})
+
+router.post('/addcourse', (req, res) => {
+  let sql = $sql.course.addcourse;
+  let sql1 = $sql.course.add;
+  console.log(req.body);
+  let { unique,courseNum,courseName,courseResult,courseTime,courseteacher } = req.body;
+  conn.query(sql, [courseNum,courseName,courseteacher,courseResult,courseTime], (err) => {
+    if (err) {
+      console.log(err);
+    }
+    conn.query(sql1, [unique,courseNum], (err) => {
+      if (err) {
+        console.log(err);
+      }
+      res.send(formatReq(1, "添加成功"))
+    })
+  });
 });
 
 module.exports = router;

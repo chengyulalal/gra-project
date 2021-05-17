@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-11 16:04:51
+ * @LastEditTime: 2021-05-16 16:20:24
  * @FilePath: \gra-project-sourcetree\src\router\index.js
  */
 import Vue from 'vue'
@@ -11,20 +11,19 @@ import enter from '@/components/enter'
 import register from '@/components/register'
 import index from '@/components/index'
 import content from '@/components/content'
+import indexteacher from '@/components/indexteacher'
+import teachercontent from '@/components/teachercontent'
+import endcontent from '@/components/endcontent'
 
 Vue.use(Router)
  
-// 解决相同路径报错问题 重写push方法
-const VueRouterPush = Router.prototype.push
-Router.prototype.push = function push (to) {
-  return VueRouterPush.call(this, to).catch(err => err)
-}
 const router = new Router({
   routes: [
     {
       path: '/',
       name: 'enter',
       component: enter,
+      redirect:'/login',
       children:[
         {
           path: 'login',
@@ -43,6 +42,18 @@ const router = new Router({
     {
       path: '/content',
       component: content
+    },
+    {
+      path: '/indexteacher',
+      component: indexteacher
+    },
+    {
+      path: '/teachercontent',
+      component: teachercontent
+    },
+    {
+      path: '/endcontent',
+      component: endcontent
     }
   ]
 })

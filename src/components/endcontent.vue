@@ -1,8 +1,8 @@
 <!--
- * @Date: 2021-05-10 12:59:30
+ * @Date: 2021-05-16 16:19:31
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-16 16:16:20
- * @FilePath: \gra-project-sourcetree\src\components\content.vue
+ * @LastEditTime: 2021-05-16 17:04:26
+ * @FilePath: \gra-project-sourcetree\src\components\endcontent.vue
 -->
 <template>
   <el-container>
@@ -22,7 +22,8 @@
       <div class="main">
         <div class="courseNameShow">
           <div class="title">
-            <div class="fontclass">{{row.Course_name}}</div>
+            <div class="fontclass">{{row.Course_name}}(已结课)</div>
+            <h2>成绩:{{row.Grade_result}}</h2>
             <h4>课程号:{{row.Course_id}}</h4>
           </div>
           <div class="teacher">
@@ -315,15 +316,15 @@ export default {
 .teacher{
   z-index: 100;
   font-size: 20px;
-  width: 200px;
+  width: 250px;
   height: 50px;
   color: #E9EEF3;
   font-family:'Times New Roman', Times, serif;
   display: flex;
   align-self: flex-end;
+  margin-right: 20px;
 }
-h4{
-  margin-top: 30px;
+h4,h2{
   margin-left: 30px;
   color: #E9EEF3;
   font-family:'Times New Roman', Times, serif;
@@ -352,7 +353,7 @@ h4{
   height: 100%;
   border: 1px solid white;
   border-radius: 5px;
-  background: url('/static/img/course.jpg') no-repeat;
+  background: url('/static/img/courseend.jpg') no-repeat;
 	background-size: cover;
   display: flex;
   justify-content: space-between;
