@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-14 21:34:55
+ * @LastEditTime: 2021-05-18 19:53:28
  * @FilePath: \gra-project-sourcetree\src\components\login.vue
 -->
 <template>
@@ -86,7 +86,7 @@ import { getUser } from '../http/api'
               if (this.ruleForm.user === '教师') {
                 this.$router.replace({ path: '/indexteacher' })
               } else {
-                this.$router.replace({ path: '/index' })
+                this.$router.replace({ path: '/index' });
               }
             }
           })

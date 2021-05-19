@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-16 16:20:24
+ * @LastEditTime: 2021-05-18 21:22:04
  * @FilePath: \gra-project-sourcetree\src\router\index.js
  */
 import Vue from 'vue'
@@ -13,7 +13,6 @@ import index from '@/components/index'
 import content from '@/components/content'
 import indexteacher from '@/components/indexteacher'
 import teachercontent from '@/components/teachercontent'
-import endcontent from '@/components/endcontent'
 
 Vue.use(Router)
  
@@ -50,26 +49,18 @@ const router = new Router({
     {
       path: '/teachercontent',
       component: teachercontent
-    },
-    {
-      path: '/endcontent',
-      component: endcontent
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
+  let token = localStorage.getItem('token');
   if (to.path === '/login') {
     next();
-  } else {
-    let token = localStorage.getItem('token');
-    console.log(to.path);
-    console.log(token);
-    if (token === null || token === '') {
+  } else if (token === null || token === '') {
       next('/login');
     } else {
       next();
     }
-  }
 });
 export default router

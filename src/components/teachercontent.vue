@@ -2,9 +2,13 @@
   <el-container>
     <el-header>
       <div class="header">
-        <h3>课程管理系统</h3>
+        <el-tooltip class="item" effect="dark" content="返回首页" placement="right">
+          <div class="headertitle" @click="gotoindex">课程管理系统</div>
+        </el-tooltip>
         <div class="right">
-          <el-button type="primary" size="small" icon="el-icon-upload" @click="centerDialogVisible = true">上传文件</el-button>
+          <el-button v-if="row.Grade_isend === 0" type="danger" size="small" icon="el-icon-thumb" @click="showdrawer">点击结课</el-button>
+          <el-button v-if="row.Grade_isend === 1" type="warning" size="small" icon="el-icon-edit" @click="showdrawer">修改成绩</el-button>
+          <el-button style="margin-right:10px" type="primary" size="small" icon="el-icon-upload" @click="centerDialogVisible = true">上传文件</el-button>
           <el-dropdown trigger="click">
             <el-avatar size='medium' :src="circleUrl" ></el-avatar>
             <el-dropdown-menu slot="dropdown">
@@ -17,9 +21,9 @@
     </el-header>
     <el-main>
       <div class="main">
-        <div :class="[row.Grade_isend === '已结课' ? 'courseNameShowend':'courseNameShow']">
+        <div :class="[row.Grade_isend === 1 ? 'courseNameShowend':'courseNameShow']">
           <div class="title">
-            <template v-if="row.Grade_isend === '已结课'">
+            <template v-if="row.Grade_isend === 1">
               <div class="fontclass">{{row.Course_name}}(已结课)</div>
             </template>
             <template v-else>
@@ -41,9 +45,10 @@
                    <el-popconfirm
                     title="是否需要下载该文件?"
                     @confirm="download(file.file_path,file.file_name)"
+                    :key="index"
                   >
                     <template slot="reference">
-                      <i class="el-icon-s-order fontsize"></i></br>
+                      <i class="el-icon-s-order fontsize"></i><br>
                       <div class="filesize">
                         <span class="fontmini">{{ file.file_name }}</span>
                       </div>
@@ -60,7 +65,7 @@
                     @confirm="download(file.file_path,file.file_name)"
                   >
                       <template slot="reference">
-                        <i class="el-icon-s-order fontsize"></i></br>
+                        <i class="el-icon-s-order fontsize"></i><br>
                         <div class="filesize">
                           <span class="fontmini">{{ file.file_name }}</span>
                         </div>
@@ -75,9 +80,10 @@
                   <el-popconfirm
                     title="是否需要下载该文件?"
                     @confirm="download(file.file_path,file.file_name)"
+                    :key="index"
                   >
                     <template slot="reference">
-                      <i class="el-icon-s-order fontsize"></i></br>
+                      <i class="el-icon-s-order fontsize"></i><br>
                       <div class="filesize">
                         <span class="fontmini">{{ file.file_name }}</span>
                       </div>
@@ -149,21 +155,42 @@
         <el-button type="primary" @click="save">保 存</el-button>
       </span>
     </el-dialog>
+
+    <el-drawer
+      :title="row.Grade_isend === 1 ? '修改学生成绩':'提交学生成绩'"
+      :visible.sync="table"
+      direction="rtl"
+      size="50%">
+      <el-table :data="gridData">
+          <el-table-column property="User_unique" label="学号" width="150"></el-table-column>
+          <el-table-column property="User_name" label="姓名" width="200"></el-table-column>
+          <el-table-column property="Grade_result" label="成绩">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.Grade_result" placeholder="请输入成绩"></el-input>
+            </template>
+          </el-table-column>
+      </el-table>
+      <el-button v-if="row.Grade_isend === 0" style="margin:20px" type="primary" @click="submit">结课</el-button>
+      <el-button v-if="row.Grade_isend === 1" style="margin:20px" type="primary" @click="submit">修改</el-button>
+    </el-drawer>
   </el-container>
 </template>
 
 <script>
-import { queryPerson,updataPerson,list,download,uploadFile } from '../http/api'
+import { queryPerson,updataPerson,list,download,uploadFile,getStudent,updataGrade,teacherReload } from '../http/api'
 export default {
   data () {
     return {
       row: {},
       path: './public/',
+      table: false,
       circleUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
       personVisible: false,
       centerDialogVisible: false,
       formLabelWidth: '120px',
       tabPosition: 'left',
+      gridData:[],
+      input:'',
       form1: {
         name: '',
         password: '',
@@ -195,6 +222,60 @@ export default {
     },
   },
   methods: {
+    gotoindex () {
+      this.$router.replace('/indexteacher');
+    },
+    showdrawer () {
+      this.table = true;
+      getStudent({Course_id:this.row.Course_id,unique:this.$store.state.unique}).then(res => {
+        console.log(res.data);
+        this.gridData = res.data;
+      }).catch((err)=>{
+        console.log(err)
+        if (err.code === -1) {
+        this.$confirm('登录已过期，请重新登录','提示',{
+          confirmButtonText: '确定',
+          showClose: false,
+          showCancelButton: false,
+          closeOnClickModal: false,
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.$router.replace({ path: '/login' });
+        })
+        }
+      })
+    },
+    submit () {
+      let grade = this.gridData.map(val => {
+        return {
+         Grade_result: val.Grade_result,
+         User_unique: val.User_unique,
+         Course_id: val.Course_id
+        }
+      });
+      if (this.row.Grade_isend === 0) {
+        grade.push({Grade_result:0,User_unique:this.$store.state.unique,Course_id:this.row.Course_id})
+      }
+      updataGrade(grade).then(res => {
+        console.log(res);
+      }).catch((err)=>{
+        console.log(err)
+        if (err.code === -1) {
+        this.$confirm('登录已过期，请重新登录','提示',{
+          confirmButtonText: '确定',
+          showClose: false,
+          showCancelButton: false,
+          closeOnClickModal: false,
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.$router.replace({ path: '/login' });
+        })
+        }
+      })
+      location. reload();
+    },
     onChange(file,filelist){
       //file.raw 才是真实的 file 对象
       this.fileList.push(file.raw)
@@ -232,17 +313,44 @@ export default {
               message: '上传成功',
               type: 'success'
             });
+            this.centerDialogVisible = false;
+            location.reload();
           }
-        }).catch(e => {
-          console.log(e)
-        });
+        }).catch((err)=>{
+        console.log(err)
+        if (err.code === -1) {
+        this.$confirm('登录已过期，请重新登录','提示',{
+          confirmButtonText: '确定',
+          showClose: false,
+          showCancelButton: false,
+          closeOnClickModal: false,
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.$router.replace({ path: '/login' });
+        })
+        }
+      })
     },
     show (val) {
-      console.log(val.index);
       if (val.index === '1') {
         list({path:this.jobpath,Course_id:this.row.Course_id}).then(res => {
           this.jobfiles_list=res.data.data;
-        }).catch(err => {console.log(err)})
+        }).catch((err)=>{
+        console.log(err)
+        if (err.code === -1) {
+        this.$confirm('登录已过期，请重新登录','提示',{
+          confirmButtonText: '确定',
+          showClose: false,
+          showCancelButton: false,
+          closeOnClickModal: false,
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.$router.replace({ path: '/login' });
+        })
+        }
+      })
       } else if (val.index === '2') {
         list({path:this.testpath,Course_id:this.row.Course_id}).then(res => {
           this.testfiles_list=res.data.data;
@@ -264,15 +372,43 @@ export default {
         elink.click()
         URL.revokeObjectURL(elink.href) // 释放URL 对象
         document.body.removeChild(elink)
-      }).catch((err)=>{console.log(err)})
+      }).catch((err)=>{
+        console.log(err)
+        if (err.code === -1) {
+        this.$confirm('登录已过期，请重新登录','提示',{
+          confirmButtonText: '确定',
+          showClose: false,
+          showCancelButton: false,
+          closeOnClickModal: false,
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.$router.replace({ path: '/login' });
+        })
+        }
+      })
     },
     outlogin () {
       localStorage.removeItem('token');
-      this.$router.push('/login');
+      this.$router.replace('/login');
     },
     save () {
       updataPerson(this.form1).then(res =>{
-      }).catch((err)=>{console.log(err)})
+      }).catch((err)=>{
+        console.log(err)
+        if (err.code === -1) {
+        this.$confirm('登录已过期，请重新登录','提示',{
+          confirmButtonText: '确定',
+          showClose: false,
+          showCancelButton: false,
+          closeOnClickModal: false,
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.$router.replace({ path: '/login' });
+        })
+        }
+      })
     },
     showperson () {
       queryPerson({ unique:this.$store.state.unique }).then(res => {
@@ -287,26 +423,61 @@ export default {
         this.form1.department = res.data[0].User_department;
         this.form1.grade = res.data[0].User_grade;
         this.form1.user_class = res.data[0].User_class;
+      }).catch((err)=>{
+        console.log(err)
+        if (err.code === -1) {
+        this.$confirm('登录已过期，请重新登录','提示',{
+          confirmButtonText: '确定',
+          showClose: false,
+          showCancelButton: false,
+          closeOnClickModal: false,
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.$router.replace({ path: '/login' });
+        })
+        }
       })
       this.personVisible = true;
     },
   },
   created () {
-    // if (!this.$store.state.unique) {
-    //   this.$store.commit('setunique', localStorage.getItem('unique'));
-    // }
-    this.row = this.$route.query.line;
-   
-    list({path:this.folderpath,Course_id:this.row.Course_id}).then(res => {
-      console.log(res.data.data);
-      this.files_list=res.data.data;
-    }).catch(err => {console.log(err)})
-    console.log(this.row);
+    if (!this.$store.state.unique) {
+      this.$store.commit('setunique', localStorage.getItem('unique'));
+    }
+    teacherReload({Course_id:this.$route.query.courseid,unique:this.$store.state.unique}).then(res => {
+      console.log(res.data);
+      this.row = res.data[0];
+    }).catch(err => {
+      if (err.code === -1) {
+        this.$confirm('登录已过期，请重新登录','提示',{
+          confirmButtonText: '确定',
+          showClose: false,
+          showCancelButton: false,
+          closeOnClickModal: false,
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.$router.replace({ path: '/login' });
+        })
+      }
+    })
+    setTimeout(() => {
+      list({path:this.folderpath,Course_id:this.row.Course_id}).then(res => {
+        console.log(res.data.data);
+        this.files_list=res.data.data;
+      }).catch(err => {console.log(err)})
+    },50)
   },
 }
 </script>
 
 <style scoped lang="scss">
+.headertitle{
+  font-size: 25px;
+  text-align: center;
+  cursor: pointer;
+}
 .allcontent{
   width: 800px;
   height: 100%;
@@ -364,10 +535,10 @@ export default {
   align-self:flex-start;
 }
 .right{
-  width: 150px;
+  width: 260px;
   height: 50px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 }
 .title{
@@ -445,6 +616,7 @@ h4{
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-top: 5px;
   }
 }
 .el-avatar {

@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-30 14:58:56
+ * @LastEditTime: 2021-05-18 20:05:39
  * @FilePath: \gra-project-sourcetree\src\App.vue
 -->
 <template>
@@ -22,6 +22,10 @@ body{
   margin: 0;
   padding: 0;
   overflow:hidden
+}
+a{
+  text-decoration: none;
+  color: black;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

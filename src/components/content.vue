@@ -1,14 +1,16 @@
 <!--
  * @Date: 2021-05-10 12:59:30
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-16 16:16:20
+ * @LastEditTime: 2021-05-18 21:33:10
  * @FilePath: \gra-project-sourcetree\src\components\content.vue
 -->
 <template>
   <el-container>
     <el-header>
       <div class="header">
-        <h3>课程管理系统</h3>
+        <el-tooltip class="item" effect="dark" content="返回首页" placement="right">
+          <div class="headertitle" @click="gotoindex">课程管理系统</div>
+        </el-tooltip>
         <el-dropdown trigger="click">
           <el-avatar size='medium' :src="circleUrl" ></el-avatar>
           <el-dropdown-menu slot="dropdown">
@@ -20,9 +22,17 @@
     </el-header>
     <el-main>
       <div class="main">
-        <div class="courseNameShow">
+        <div :class="[row.Grade_isend === 1 ? 'courseNameShowend':'courseNameShow']">
           <div class="title">
-            <div class="fontclass">{{row.Course_name}}</div>
+            <template v-if="row.Grade_isend === 1">
+              <div class="fontclass">{{row.Course_name}}(已结课)</div>
+            </template>
+            <template v-else>
+              <div class="fontclass">{{row.Course_name}}</div>
+            </template>
+            <template v-if="row.Grade_isend === 1">
+              <h2>成绩:{{row.Grade_result}}</h2>
+            </template>
             <h4>课程号:{{row.Course_id}}</h4>
           </div>
           <div class="teacher">
@@ -39,9 +49,10 @@
                    <el-popconfirm
                     title="是否需要下载该文件?"
                     @confirm="download(file.file_path,file.file_name)"
+                    :key="index"
                   >
                     <template slot="reference">
-                      <i class="el-icon-s-order fontsize"></i></br>
+                      <i class="el-icon-s-order fontsize"></i><br>
                       <div class="filesize">
                         <span class="fontmini">{{ file.file_name }}</span>
                       </div>
@@ -56,9 +67,10 @@
                    <el-popconfirm
                     title="是否需要下载该文件?"
                     @confirm="download(file.file_path,file.file_name)"
+                    :key="index"
                   >
                     <template slot="reference">
-                      <i class="el-icon-s-order fontsize"></i></br>
+                      <i class="el-icon-s-order fontsize"></i><br>
                       <div class="filesize">
                         <span class="fontmini">{{ file.file_name }}</span>
                       </div>
@@ -73,9 +85,10 @@
                    <el-popconfirm
                     title="是否需要下载该文件?"
                     @confirm="download(file.file_path,file.file_name)"
+                    :key="index"
                   >
                     <template slot="reference">
-                      <i class="el-icon-s-order fontsize"></i></br>
+                      <i class="el-icon-s-order fontsize"></i><br>
                       <div class="filesize">
                         <span class="fontmini">{{ file.file_name }}</span>
                       </div>
@@ -182,6 +195,9 @@ export default {
     },
   },
   methods: {
+    gotoindex () {
+      this.$router.replace('/index');
+    },
     show (val) {
       if (val.index === '1') {
         list({path:this.jobpath,Course_id:this.row.Course_id}).then(res => {
@@ -212,7 +228,8 @@ export default {
     },
     outlogin () {
       localStorage.removeItem('token');
-      this.$router.push('/login');
+      console.log(history.length);
+      this.$router.replace('/login');
     },
     save () {
       updataPerson(this.form1).then(res =>{
@@ -239,7 +256,7 @@ export default {
     // if (!this.$store.state.unique) {
     //   this.$store.commit('setunique', localStorage.getItem('unique'));
     // }
-    this.row = this.$route.query.line;
+    this.row = JSON.parse(this.$route.query.line);
     list({path:this.folderpath,Course_id:this.row.Course_id}).then(res => {
       console.log(res.data.data);
       this.files_list=res.data.data;
@@ -250,6 +267,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.headertitle{
+  font-size: 25px;
+  text-align: center;
+  cursor: pointer;
+}
 .allcontent{
   width: 800px;
   height: 100%;
@@ -315,7 +337,7 @@ export default {
 .teacher{
   z-index: 100;
   font-size: 20px;
-  width: 200px;
+  width: 250px;
   height: 50px;
   color: #E9EEF3;
   font-family:'Times New Roman', Times, serif;
@@ -324,6 +346,11 @@ export default {
 }
 h4{
   margin-top: 30px;
+  margin-left: 30px;
+  color: #E9EEF3;
+  font-family:'Times New Roman', Times, serif;
+}
+h2{
   margin-left: 30px;
   color: #E9EEF3;
   font-family:'Times New Roman', Times, serif;
@@ -359,6 +386,17 @@ h4{
   opacity:0.8
   }
 }
+.courseNameShowend {
+  width: 1000px;
+  height: 100%;
+  border: 1px solid white;
+  border-radius: 5px;
+  background: url('/static/img/courseend.jpg') no-repeat;
+	background-size: cover;
+  display: flex;
+  justify-content: space-between;
+  opacity:0.8
+}
 .el-header {
   background-color: #B3C0D1;
   color: #333;
@@ -367,6 +405,7 @@ h4{
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-top: 10px;
   }
 }
 .el-avatar {

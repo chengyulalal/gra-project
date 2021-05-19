@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-20 13:50:20
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-16 14:50:35
+ * @LastEditTime: 2021-05-18 13:30:35
  * @FilePath: \gra-project-sourcetree\server\api\userApi.js
  */
 const models = require('../db');
@@ -250,4 +250,41 @@ router.post('/addcourse', (req, res) => {
   });
 });
 
+router.post('/getStudent', (req, res) => {
+  let sql = $sql.course.getstudent;
+  console.log("courseid", req.body.Course_id);
+  let {Course_id,unique} = req.body;
+	conn.query(sql, [Course_id,unique], (err,result) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log(result);
+    res.send(result);
+  });
+})
+
+router.post('/updataGrade', (req, res) => {
+  let sql = $sql.grade.updata;
+  console.log(req.body);
+  for (let i = 0; i < req.body.length; i++) {
+    let {Grade_result,User_unique,Course_id} = req.body[i];
+    conn.query(sql, [Grade_result,User_unique,Course_id], (err,result) => {
+    if (err) {
+      console.log(err);
+    }
+    });
+  }
+  res.send(formatReq(1, "添加成功"));
+})
+
+router.post('/teacherReload', (req, res) => {
+  let sql = $sql.course.query2;
+  console.log(req.body);
+  conn.query(sql, [req.body.Course_id,req.body.unique], (err,result) => {
+    if (err) {
+      console.log(err);
+    }
+    res.send(result);
+  });
+})
 module.exports = router;

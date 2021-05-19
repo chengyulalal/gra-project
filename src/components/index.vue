@@ -1,14 +1,14 @@
 <!--
  * @Date: 2021-05-17 12:55:16
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-17 12:55:34
+ * @LastEditTime: 2021-05-18 21:21:29
  * @FilePath: \gra-project-sourcetree\src\components\index.vue
 -->
 <template>
   <el-container>
     <el-header>
       <div class="header">
-        <h3>课程管理系统</h3>
+        <div class="headertitle">课程管理系统</div>
         <div class="right">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" @click="centerDialogVisible = true">加入课程</el-button>
           <el-dropdown trigger="click">
@@ -62,7 +62,7 @@
                 :data="tableData1"
                 max-height="400"
                 border
-                @row-click='toendContent'
+                @row-click='toNoendContent'
                 style="width: 100%">
                 <el-table-column
                   prop="Course_id"
@@ -258,10 +258,7 @@ export default {
       this.personVisible = true;
     },
     toNoendContent (row) {
-      this.$router.push({path:'/content',query: {line: row}})
-    },
-    toendContent (row) {
-      this.$router.push({path:'/endcontent',query: {line: row}})
+      this.$router.replace({path:'/content',query: {line: JSON.stringify(row)}})
     },
     // 添加课程
     join () {
@@ -353,6 +350,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.headertitle{
+  font-size: 25px;
+  text-align: center;
+}
 .el-container {
   height: 100%;
 }
@@ -380,6 +381,7 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-top: 5px;
   }
 }
 .right{

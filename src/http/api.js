@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-21 13:34:16
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-15 14:49:07
+ * @LastEditTime: 2021-05-18 13:13:53
  * @FilePath: \gra-project-sourcetree\src\http\api.js
  */
 import Axios from './request'
@@ -96,6 +96,36 @@ export function download(data) {
 export function addcourse(data) {
     return Axios({
         url: "/addcourse",
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: data
+    })
+}
+export function getStudent(data) {
+    return Axios({
+        url: "/getStudent",
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: data
+    })
+}
+export function updataGrade(data) {
+    return Axios({
+        url: "/updataGrade",
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: data
+    })
+}
+export function teacherReload(data) {
+    return Axios({
+        url: "/teacherReload",
         method: 'post',
         headers: {
             'Content-Type': 'application/json'

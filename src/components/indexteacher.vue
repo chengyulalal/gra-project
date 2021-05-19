@@ -1,14 +1,14 @@
 <!--
  * @Date: 2021-05-14 21:27:48
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-16 19:31:04
+ * @LastEditTime: 2021-05-18 21:00:31
  * @FilePath: \gra-project-sourcetree\src\components\indexteacher.vue
 -->
 <template>
   <el-container>
     <el-header>
       <div class="header">
-        <h3>课程管理系统</h3>
+        <div class="headertitle">课程管理系统</div>
         <div class="right">
           <el-button type="primary" size="small" icon="el-icon-circle-plus-outline" @click="centerDialogVisible = true">发布课程</el-button>
           <el-dropdown trigger="click">
@@ -182,8 +182,7 @@ export default {
       this.$router.replace('/login');
     },
     toTeacherContent (row) {
-      row.Course_teacher = this.form1.name;
-      this.$router.push({path:'/teachercontent',query: {line: row}})
+      this.$router.replace({path:'/teachercontent',query: {courseid: row.Course_id}})
     },
     save () {
       updataPerson(this.form1).then(res =>{
@@ -248,7 +247,6 @@ export default {
         this.form1.telnumber = res.data[0].User_tel_number;
         this.form1.department = res.data[0].User_department;
       }).catch((err)=>{
-      console.log(err);
       if (err.code === -1) {
         this.$confirm('登录已过期，请重新登录','提示',{
           confirmButtonText: '确定',
@@ -270,7 +268,7 @@ export default {
         if (val.Grade_isend === 0) {
           val.Grade_isend='未结课';
           return val
-        } else {
+        } else if (val.Grade_isend === 1) {
           val.Grade_isend='已结课'
           return val
         }
@@ -281,26 +279,16 @@ export default {
       });
       this.courseid = courseid;
       console.log(this.courseid);
-    }).catch((err)=>{
-      console.log(err);
-      if (err.code === -1) {
-        this.$confirm('登录已过期，请重新登录','提示',{
-          confirmButtonText: '确定',
-          showClose: false,
-          showCancelButton: false,
-          closeOnClickModal: false,
-          type: 'warning',
-          center: true
-        }).then(() => {
-          this.$router.replace({ path: '/login' });
-        })
-      }
-      })
+    }).catch((err)=>{console.log(err)})
   }
 }
 </script>
 
 <style scoped lang="scss">
+.headertitle{
+  font-size: 25px;
+  text-align: center;
+}
 .el-container {
   height: 100%;
 }
@@ -328,6 +316,7 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-top: 5px;
   }
 }
 .right{
