@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-05-17 12:55:16
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-18 21:21:29
+ * @LastEditTime: 2021-05-19 14:23:59
  * @FilePath: \gra-project-sourcetree\src\components\index.vue
 -->
 <template>
@@ -271,7 +271,10 @@ export default {
         return
       }
       joinClass({unique:this.$store.state.unique,courseid:this.form.courseNum}).then(res => {
-        console.log(res);
+        console.log(res.data.code === '1');
+        if (res.data.code === '1') {
+          this.$message.error('课程已结课,无法添加');
+        }
       }).catch((err)=>{
       console.log(err);
       if (err.code === -1) {

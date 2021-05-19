@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-05-10 12:59:30
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-18 21:33:10
+ * @LastEditTime: 2021-05-19 13:27:43
  * @FilePath: \gra-project-sourcetree\src\components\content.vue
 -->
 <template>
@@ -321,9 +321,8 @@ export default {
   width: 900px;
   height: 100%;
   margin-top: 30px;
-  margin-left: 70px;
   display: flex;
-  align-self:flex-start;
+  align-self:center;
 }
 .title{
   z-index: 100;

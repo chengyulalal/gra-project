@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-18 21:22:04
+ * @LastEditTime: 2021-05-19 14:54:08
  * @FilePath: \gra-project-sourcetree\src\router\index.js
  */
 import Vue from 'vue'
@@ -55,7 +55,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   let token = localStorage.getItem('token');
-  if (to.path === '/login') {
+  if (to.path === '/login' || to.path === '/register') {
     next();
   } else if (token === null || token === '') {
       next('/login');

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-20 13:50:20
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-18 13:30:35
+ * @LastEditTime: 2021-05-19 14:08:21
  * @FilePath: \gra-project-sourcetree\server\api\userApi.js
  */
 const models = require('../db');
@@ -134,20 +134,33 @@ router.post('/getClass', (req, res) => {
 router.post('/joinClass', (req, res) => {
   let sql = $sql.course.add;
   let sql2 = $sql.course.queryClass;
+  let sql3 = $sql.course.queryisend
   let { unique,courseid } = req.body;
   conn.query(sql2, [courseid], (err, result) => {
     if (err) {
       console.log(err);
     }
     if (result.length !== 0) {
-      conn.query(sql, [unique,courseid], (err, result) => {
+      conn.query(sql3, [courseid], (err, result) => {
         if (err) {
           console.log(err);
         }
-        res.json({
-          code: '0',
-          msg: '添加成功'
-        })
+        if (result[0].Grade_isend === 0) {
+          conn.query(sql, [unique,courseid], (err, result) => {
+            if (err) {
+              console.log(err);
+            }
+            res.json({
+              code: '0',
+              msg: '添加成功'
+            })
+          });
+        } else {
+          res.json({
+            code: '1',
+            msg: '添加失败，该课程已结课'
+          })
+        }
       });
     }
   });

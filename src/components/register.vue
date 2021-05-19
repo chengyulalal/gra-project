@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-04-19 13:28:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-04-23 15:44:05
+ * @LastEditTime: 2021-05-19 16:24:58
  * @FilePath: \gra-project-sourcetree\src\components\register.vue
 -->
 <template>
@@ -34,7 +34,8 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item class="btn">
-        <el-button size='medium' class="btn1" type="primary" @click="submitForm('ruleForm')">提交</el-button>
+        <el-button size='medium' class="btn1" type="primary" @click="submitForm('ruleForm')">注册</el-button>
+        <el-button size='medium' class="" type="info" @click="back">返回登录</el-button>
       </el-form-item>
     </el-form>
   </div>           
@@ -91,6 +92,9 @@ export default {
     };
   },
   methods: {
+    back () {
+      this.$router.replace({ path: '/login' });
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -99,7 +103,18 @@ export default {
               alert('用户已注册');
               this.resetForm(formName);
             } else {
+              this.$store.commit('setunique', this.ruleForm.unique);
+              localStorage.setItem('unique', this.ruleForm.unique);
+              this.$message({
+                message: '登录成功',
+                type: 'success'
+              });
               localStorage.setItem('token',res.data.user_token);
+              if (this.ruleForm.user === '学生') {
+                this.$router.replace({ path: '/index' })
+              } else {
+                this.$router.replace({ path: '/indexteacher' })
+              }
             }
           })
         } else {

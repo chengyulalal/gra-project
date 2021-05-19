@@ -29,7 +29,7 @@
             <template v-else>
               <div class="fontclass">{{row.Course_name}}</div>
             </template>
-            <h4>课程号:{{row.Course_id}}</h4>
+            <h4>课程号:{{row.Course_id}}<span style="margin-left:20px">加课人数:{{gridData.length}}</span></h4>
           </div>
           <div class="teacher">
             上课教师:{{row.Course_teacher}}
@@ -227,24 +227,24 @@ export default {
     },
     showdrawer () {
       this.table = true;
-      getStudent({Course_id:this.row.Course_id,unique:this.$store.state.unique}).then(res => {
-        console.log(res.data);
-        this.gridData = res.data;
-      }).catch((err)=>{
-        console.log(err)
-        if (err.code === -1) {
-        this.$confirm('登录已过期，请重新登录','提示',{
-          confirmButtonText: '确定',
-          showClose: false,
-          showCancelButton: false,
-          closeOnClickModal: false,
-          type: 'warning',
-          center: true
-        }).then(() => {
-          this.$router.replace({ path: '/login' });
-        })
-        }
-      })
+      // getStudent({Course_id:this.row.Course_id,unique:this.$store.state.unique}).then(res => {
+      //   console.log(res.data);
+      //   this.gridData = res.data;
+      // }).catch((err)=>{
+      //   console.log(err)
+      //   if (err.code === -1) {
+      //   this.$confirm('登录已过期，请重新登录','提示',{
+      //     confirmButtonText: '确定',
+      //     showClose: false,
+      //     showCancelButton: false,
+      //     closeOnClickModal: false,
+      //     type: 'warning',
+      //     center: true
+      //   }).then(() => {
+      //     this.$router.replace({ path: '/login' });
+      //   })
+      //   }
+      // })
     },
     submit () {
       let grade = this.gridData.map(val => {
@@ -467,6 +467,10 @@ export default {
         console.log(res.data.data);
         this.files_list=res.data.data;
       }).catch(err => {console.log(err)})
+      getStudent({Course_id:this.row.Course_id,unique:this.$store.state.unique}).then(res => {
+      console.log(res.data);
+      this.gridData = res.data;
+      })
     },50)
   },
 }
@@ -530,9 +534,8 @@ export default {
   width: 900px;
   height: 100%;
   margin-top: 30px;
-  margin-left: 70px;
   display: flex;
-  align-self:flex-start;
+  align-self:center;
 }
 .right{
   width: 260px;

@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-04-09 16:15:02
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-18 19:53:28
+ * @LastEditTime: 2021-05-19 15:08:13
  * @FilePath: \gra-project-sourcetree\src\components\login.vue
 -->
 <template>
@@ -97,7 +97,7 @@ import { getUser } from '../http/api'
       });
     },
     Gotoregister () {
-      this.$router.push({ path: '/register' });
+      this.$router.replace({ path: '/register' });
     }
   }
 }
