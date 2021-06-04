@@ -1,17 +1,19 @@
 /*
  * @Date: 2021-04-20 13:40:06
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-10 15:10:22
+ * @LastEditTime: 2021-06-04 14:57:18
  * @FilePath: \gra-project-sourcetree\server\index.js
  */
 const express = require('express');
 const app = express();
 const userapi = require('./api/userApi');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 
 const port = 3000;
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({ extended : false }));
 app.use(function (req, res, next) {
   console.log(req.url);

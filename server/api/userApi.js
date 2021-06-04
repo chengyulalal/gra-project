@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-20 13:50:20
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-19 14:08:21
+ * @LastEditTime: 2021-05-22 19:58:15
  * @FilePath: \gra-project-sourcetree\server\api\userApi.js
  */
 const models = require('../db');
@@ -300,4 +300,27 @@ router.post('/teacherReload', (req, res) => {
     res.send(result);
   });
 })
+
+router.post('/outclass', (req, res) => {
+  let sql = $sql.grade.outcourse;
+  console.log(req.body);
+  conn.query(sql, [req.body.Course_id,req.body.unique], (err,result) => {
+    if (err) {
+      console.log(err);
+    }
+    res.send(formatReq(1, "删除成功"));
+  });
+})
+
+router.post('/onefile', (req, res) => {
+  res.setHeader('Content-type', 'application/octet-stream');
+  var fileStream = fs.createReadStream('./public/folder/100012_2021届毕业生推荐表-杨澄宇.doc');
+  fileStream.on('data', function (data) {
+      res.write(data, 'binary');
+  });
+  fileStream.on('end', function () {
+      res.end();
+  });
+})
+
 module.exports = router;

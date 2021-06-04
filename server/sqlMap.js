@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-20 13:40:21
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-19 13:48:13
+ * @LastEditTime: 2021-05-22 15:45:18
  * @FilePath: \gra-project-sourcetree\server\sqlMap.js
  */
 module.exports = {
@@ -22,5 +22,6 @@ module.exports = {
     },
     grade: {
         updata: 'UPDATE grade SET Grade_result=?,Grade_isend=1 WHERE User_unique=? and Course_id=?',
+        outcourse: 'delete from grade where Course_id=? and User_unique=?'
     }
    };

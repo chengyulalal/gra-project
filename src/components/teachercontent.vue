@@ -45,6 +45,8 @@
                    <el-popconfirm
                     title="是否需要下载该文件?"
                     @confirm="download(file.file_path,file.file_name)"
+                    cancel-button-text='预览'
+                    @cancel="viewfile(file.file_path)"
                     :key="index"
                   >
                     <template slot="reference">
@@ -63,6 +65,8 @@
                   <el-popconfirm
                     title="是否需要下载该文件?"
                     @confirm="download(file.file_path,file.file_name)"
+                    cancel-button-text='预览'
+                    @cancel="viewfile(file.file_path)"
                   >
                       <template slot="reference">
                         <i class="el-icon-s-order fontsize"></i><br>
@@ -80,6 +84,8 @@
                   <el-popconfirm
                     title="是否需要下载该文件?"
                     @confirm="download(file.file_path,file.file_name)"
+                    cancel-button-text='预览'
+                    @cancel="viewfile(file.file_path)"
                     :key="index"
                   >
                     <template slot="reference">
@@ -222,6 +228,17 @@ export default {
     },
   },
   methods: {
+    viewfile (filepath) {
+      var realfilepath = filepath.substring(6); //删除前面的public
+      var index= realfilepath.lastIndexOf(".");
+      var ext = realfilepath.substr(index+1);
+      if (ext = 'png' || 'pdf' || 'gif') {
+        window.open('http://localhost:3000/'+realfilepath);
+        return
+      }
+      var url = 'http://fileview.ngrok2.xiaomiqiu.cn/'+realfilepath; //要预览文件的访问地址
+      window.open('https://view.xdocin.com/xdoc?_xdoc='+url);
+    },
     gotoindex () {
       this.$router.replace('/indexteacher');
     },

@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-21 13:34:16
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-18 13:13:53
+ * @LastEditTime: 2021-05-22 19:46:17
  * @FilePath: \gra-project-sourcetree\src\http\api.js
  */
 import Axios from './request'
@@ -126,6 +126,26 @@ export function updataGrade(data) {
 export function teacherReload(data) {
     return Axios({
         url: "/teacherReload",
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: data
+    })
+}
+export function outclass(data) {
+    return Axios({
+        url: "/outclass",
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: data
+    })
+}
+export function onefile(data) {
+    return Axios({
+        url: "/onefile",
         method: 'post',
         headers: {
             'Content-Type': 'application/json'

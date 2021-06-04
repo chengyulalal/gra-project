@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-05-10 12:59:30
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-05-19 13:27:43
+ * @LastEditTime: 2021-06-04 14:59:38
  * @FilePath: \gra-project-sourcetree\src\components\content.vue
 -->
 <template>
@@ -11,13 +11,16 @@
         <el-tooltip class="item" effect="dark" content="返回首页" placement="right">
           <div class="headertitle" @click="gotoindex">课程管理系统</div>
         </el-tooltip>
-        <el-dropdown trigger="click">
-          <el-avatar size='medium' :src="circleUrl" ></el-avatar>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="el-icon-user" @click.native="showperson">个人信息</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-switch-button"  @click.native="outlogin">退出登录</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <div class="right">
+          <el-button style="margin-right:10px" type="danger" size="small" icon="el-icon-thumb" @click="outClass">退出课程</el-button>
+          <el-dropdown trigger="click">
+            <el-avatar size='medium' :src="circleUrl" ></el-avatar>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item icon="el-icon-user" @click.native="showperson">个人信息</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-switch-button"  @click.native="outlogin">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
       </div>
     </el-header>
     <el-main>
@@ -49,6 +52,8 @@
                    <el-popconfirm
                     title="是否需要下载该文件?"
                     @confirm="download(file.file_path,file.file_name)"
+                    cancel-button-text='预览'
+                    @cancel="viewfile(file.file_path)"
                     :key="index"
                   >
                     <template slot="reference">
@@ -67,6 +72,8 @@
                    <el-popconfirm
                     title="是否需要下载该文件?"
                     @confirm="download(file.file_path,file.file_name)"
+                    cancel-button-text='预览'
+                    @cancel="viewfile(file.file_path)"
                     :key="index"
                   >
                     <template slot="reference">
@@ -85,6 +92,8 @@
                    <el-popconfirm
                     title="是否需要下载该文件?"
                     @confirm="download(file.file_path,file.file_name)"
+                    cancel-button-text='预览'
+                    @cancel="viewfile(file.file_path)"
                     :key="index"
                   >
                     <template slot="reference">
@@ -149,7 +158,7 @@
 </template>
 
 <script>
-import { queryPerson,updataPerson,list,download } from '../http/api'
+import { queryPerson,updataPerson,list,download,outclass } from '../http/api'
 import uploadFile from './uploadFile.vue'
 export default {
   data () {
@@ -195,6 +204,45 @@ export default {
     },
   },
   methods: {
+    viewfile (filepath) {
+      var realfilepath = filepath.substring(6); //删除前面的public
+      var index= realfilepath.lastIndexOf(".");
+      var ext = realfilepath.substr(index+1);
+      if (ext = 'png' || 'pdf' || 'gif') {
+        window.open('http://localhost:3000/'+realfilepath);
+        return
+      }
+      var url = 'http://fileview.ngrok2.xiaomiqiu.cn/'+realfilepath; //要预览文件的访问地址
+      window.open('https://view.xdocin.com/xdoc?_xdoc='+url);
+    },
+    outClass () {
+      this.$alert('此操作将退出该课程, 是否继续？', {
+          center: true,
+          type: 'warning',
+      }).then(() => {
+          outclass({ Course_id:this.row.Course_id,unique:this.$store.state.unique}).then(res => {
+          console.log(res);
+          this.$message({
+          type: 'warning',
+          message: '成功退出该课程!'
+          });
+          this.$router.replace({path: '/index'});
+        }).catch(err => {
+          if (err.code === -1) {
+            this.$confirm('登录已过期，请重新登录','提示',{
+              confirmButtonText: '确定',
+              showClose: false,
+              showCancelButton: false,
+              closeOnClickModal: false,
+              type: 'warning',
+              center: true
+            }).then(() => {
+              this.$router.replace({ path: '/login' });
+            })
+          }
+        })
+      }).catch((err) =>{console.log(err)})
+    },
     gotoindex () {
       this.$router.replace('/index');
     },
@@ -253,9 +301,9 @@ export default {
     },
   },
   created () {
-    // if (!this.$store.state.unique) {
-    //   this.$store.commit('setunique', localStorage.getItem('unique'));
-    // }
+    if (!this.$store.state.unique) {
+      this.$store.commit('setunique', localStorage.getItem('unique'));
+    }
     this.row = JSON.parse(this.$route.query.line);
     list({path:this.folderpath,Course_id:this.row.Course_id}).then(res => {
       console.log(res.data.data);
@@ -297,6 +345,13 @@ export default {
 .button {
   padding: 0;
   float: right;
+}
+.right{
+  width: 260px;
+  height: 50px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 .image {
   width: 100%;
@@ -404,7 +459,7 @@ h2{
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 5px;
   }
 }
 .el-avatar {
