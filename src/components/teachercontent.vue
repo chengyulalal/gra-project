@@ -232,7 +232,7 @@ export default {
       var realfilepath = filepath.substring(6); //删除前面的public
       var index= realfilepath.lastIndexOf(".");
       var ext = realfilepath.substr(index+1);
-      if (ext = 'png' || 'pdf' || 'gif') {
+      if (ext === 'png'||ext === 'pdf'||ext === 'gif') {
         window.open('http://localhost:3000/'+realfilepath);
         return
       }

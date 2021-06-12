@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021-05-10 12:59:30
  * @LastEditors: chengyu.yang
- * @LastEditTime: 2021-06-04 14:59:38
+ * @LastEditTime: 2021-06-08 13:46:40
  * @FilePath: \gra-project-sourcetree\src\components\content.vue
 -->
 <template>
@@ -208,7 +208,7 @@ export default {
       var realfilepath = filepath.substring(6); //删除前面的public
       var index= realfilepath.lastIndexOf(".");
       var ext = realfilepath.substr(index+1);
-      if (ext = 'png' || 'pdf' || 'gif') {
+      if ( ext === 'png'||ext === 'pdf'||ext === 'gif' ) {
         window.open('http://localhost:3000/'+realfilepath);
         return
       }
